@@ -8,7 +8,7 @@ import { C, PRODUCTS, rupiah } from "../../lib/products";
 const SIZES = ["S", "M", "L", "XL"];
 
 export default function Detail() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams();
   const { add } = useCart();
   const [size, setSize] = useState("M");
   const product = PRODUCTS.find((p) => p.id === id);
@@ -38,12 +38,7 @@ export default function Detail() {
         <Text style={s.title}>{product.title}</Text>
         <Text style={s.price}>{rupiah(product.price)}</Text>
         <View style={s.meta}>
-          <Text
-            style={[
-              s.cond,
-              product.condition === "Like New" && s.condLN,
-            ]}
-          >
+          <Text style={[s.cond, product.condition === "Like New" && s.condLN]}>
             {product.condition}
           </Text>
           <Text style={s.sold}>Terjual 12</Text>
@@ -65,7 +60,7 @@ export default function Detail() {
       </ScrollView>
       <View style={s.actions}>
         <Pressable
-          style={[s.btn2]}
+          style={s.btn2}
           onPress={() => {
             add(product);
             router.push("/(tabs)/keranjang");

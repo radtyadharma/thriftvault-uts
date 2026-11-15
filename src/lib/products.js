@@ -8,16 +8,7 @@ export const C = {
   success: "#1F7A4C",
 };
 
-export type Product = {
-  id: string;
-  title: string;
-  price: number;
-  condition: string;
-  img: string;
-  desc: string;
-};
-
-export const PRODUCTS: Product[] = [
+export const PRODUCTS = [
   {
     id: "1",
     title: "Jaket Denim Vintage",
@@ -84,4 +75,4 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export const rupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
+export const rupiah = (n) => "Rp " + n.toLocaleString("id-ID");

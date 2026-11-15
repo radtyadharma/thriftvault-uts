@@ -7,7 +7,7 @@ const TABS = [
   { name: "explore", title: "Explore", icon: "compass" },
   { name: "keranjang", title: "Keranjang", icon: "cart" },
   { name: "profil", title: "Profil", icon: "person" },
-] as const;
+];
 
 export default function TabsLayout() {
   return (

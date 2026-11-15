@@ -1,9 +1,9 @@
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 import { Image } from "expo-image";
-import { C, rupiah, type Product } from "../lib/products";
+import { C, rupiah } from "../lib/products";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }) {
   return (
     <Pressable
       style={s.card}

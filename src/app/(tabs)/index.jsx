@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { ProductCard } from "../../components/ProductCard";
-import { C, PRODUCTS, rupiah } from "../../lib/products";
+import { C, PRODUCTS } from "../../lib/products";
 
 export default function Home() {
   return (
@@ -24,7 +24,7 @@ export default function Home() {
         </View>
       </View>
       <View style={s.banner}>
-        <Image source={{ uri: PRODUCTS[6].img }} style={s.bannerImg} />
+        <Image source={{ uri: PRODUCTS[6].img }} style={s.bannerImg} contentFit="cover" />
         <View style={s.scrim} />
         <Text style={s.bannerText}>Koleksi Vintage Minggu Ini</Text>
       </View>

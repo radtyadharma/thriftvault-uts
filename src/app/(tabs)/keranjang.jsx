@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
@@ -65,7 +64,6 @@ export default function Keranjang() {
       >
         <Text style={s.btnText}>Lanjut ke Checkout</Text>
       </Pressable>
-      <View style={s.tabPad} />
     </View>
   );
 }
@@ -105,5 +103,4 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
   btnText: { color: "#FFFAF5", fontSize: 15, fontWeight: "600" },
-  tabPad: { height: 0 },
 });
