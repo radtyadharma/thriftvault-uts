@@ -88,7 +88,8 @@ const Explore = () => {
         )}
         keyExtractor={(item) => item}
         showsHorizontalScrollIndicator={false}
-        style={styles.categoryList}
+        contentContainerStyle={styles.categoryList}
+        style={styles.categoryWrapper}
       />
       {/* End Category Container */}
 
@@ -133,16 +134,21 @@ const styles = StyleSheet.create({
     color: "#1E1B18",
   },
 
-  categoryList: {
+  categoryWrapper: {
     flexGrow: 0,
+    height: 34,
+  },
+
+  categoryList: {
+    paddingRight: 16,
   },
 
   categoryChip: {
     backgroundColor: "#F4F0EA",
     borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    marginRight: 8,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    marginRight: 6,
   },
 
   chipActive: {
@@ -150,7 +156,7 @@ const styles = StyleSheet.create({
   },
 
   chipText: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#6B655C",
   },
 
