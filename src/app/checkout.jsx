@@ -1,124 +1,232 @@
-import { router, Stack } from "expo-router";
-import { useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { ONGKIR, useCart } from "../lib/cart";
-import { C, rupiah } from "../lib/products";
+import React, { useState } from "react";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useCart } from "../context/CartContext";
+import { rupiah } from "../data/products";
 
-const PAYS = ["Transfer Bank", "QRIS", "COD (Bayar di Tempat)"];
+const PAYMENTS = ["Transfer Bank", "QRIS", "COD (Bayar di Tempat)"];
+const ONGKIR = 15000;
 
-export default function Checkout() {
+const Checkout = () => {
+  const router = useRouter();
   const { items, total } = useCart();
-  const [pay, setPay] = useState(PAYS[0]);
+  const [payment, setPayment] = useState(PAYMENTS[0]);
+
+  const handlePay = () => {
+    Alert.alert(
+      "Pembayaran Berhasil",
+      `Pembayaran ${rupiah(total + ONGKIR)} via ${payment} berhasil diproses.`
+    );
+  };
 
   return (
-    <View style={s.screen}>
-      <Stack.Screen options={{ headerShown: false }} />
+    <View style={styles.container}>
       <ScrollView
-        contentContainerStyle={s.content}
+        contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={s.topBar}>
-          <Pressable onPress={() => router.back()}>
-            <Text style={s.back}>{"<"}</Text>
-          </Pressable>
-          <Text style={s.title}>Checkout</Text>
-        </View>
-        <Text style={s.label}>Alamat Pengiriman</Text>
-        <View style={s.card}>
-          <Text style={s.addrName}>Raditya Dharma - 08873027864</Text>
-          <Text style={s.addr}>
+        {/* Address Container */}
+        <Text style={styles.sectionTitle}>Alamat Pengiriman</Text>
+        <View style={styles.addressCard}>
+          <Text style={styles.addressName}>Raditya Dharma - 08873027864</Text>
+          <Text style={styles.addressDetail}>
             Jl. Tukad Pakerisan No. 12, Denpasar, Bali 80237
           </Text>
         </View>
-        <Text style={s.label}>Metode Pembayaran</Text>
-        {PAYS.map((p) => (
+        {/* End Address Container */}
+
+        {/* Payment Container */}
+        <Text style={styles.sectionTitle}>Metode Pembayaran</Text>
+        {PAYMENTS.map((pay) => (
           <Pressable
-            key={p}
-            style={[s.pay, pay === p && s.payActive]}
-            onPress={() => setPay(p)}
+            key={pay}
+            style={[styles.paymentRow, payment === pay && styles.paymentActive]}
+            onPress={() => setPayment(pay)}
           >
-            <View style={[s.radio, pay === p && s.radioActive]} />
-            <Text style={[s.payText, pay === p && { fontWeight: "600" }]}>
-              {p}
-            </Text>
+            <View
+              style={[styles.radio, payment === pay && styles.radioActive]}
+            ></View>
+            <Text style={styles.paymentText}>{pay}</Text>
           </Pressable>
         ))}
-        <View style={s.summary}>
-          <View style={s.sumRow}>
-            <Text style={s.sumLabel}>Subtotal + Ongkir</Text>
-            <Text style={s.sumVal}>{rupiah(total + ONGKIR)}</Text>
+        {/* End Payment Container */}
+
+        {/* Summary Container */}
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>
+              Subtotal ({items.length} barang) + Ongkir
+            </Text>
+            <Text style={styles.summaryValue}>{rupiah(total + ONGKIR)}</Text>
           </View>
-          <View style={s.sumRow}>
-            <Text style={s.sumTotal}>Total Pembayaran</Text>
-            <Text style={s.sumPrice}>{rupiah(total + ONGKIR)}</Text>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryTotal}>Total Pembayaran</Text>
+            <Text style={styles.summaryPrice}>{rupiah(total + ONGKIR)}</Text>
           </View>
         </View>
+        {/* End Summary Container */}
+
+        {/* Back Container */}
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Kembali ke Keranjang</Text>
+        </Pressable>
+        {/* End Back Container */}
       </ScrollView>
+
+      {/* Pay Button Container */}
       <Pressable
-        style={s.btn}
+        style={[styles.payButton, items.length === 0 && styles.buttonDisabled]}
         disabled={items.length === 0}
-        onPress={() =>
-          Alert.alert(
-            "Pembayaran Berhasil",
-            `Pembayaran ${rupiah(total + ONGKIR)} via ${pay} berhasil diproses.`
-          )
-        }
+        onPress={handlePay}
       >
-        <Text style={s.btnText}>Bayar Sekarang</Text>
+        <Text style={styles.payButtonText}>Bayar Sekarang</Text>
       </Pressable>
+      {/* End Pay Button Container */}
     </View>
   );
-}
+};
 
-const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: C.bg },
-  content: { padding: 24, gap: 14, paddingBottom: 40 },
-  topBar: { flexDirection: "row", alignItems: "center", gap: 12 },
-  back: { fontSize: 24, fontWeight: "700", color: C.text },
-  title: { fontSize: 22, fontWeight: "700", color: C.text },
-  label: { fontSize: 14, fontWeight: "600", color: C.text },
-  card: {
-    backgroundColor: C.surface,
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FDFBF7",
+  },
+
+  content: {
+    padding: 24,
+    gap: 14,
+    paddingBottom: 40,
+  },
+
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1E1B18",
+  },
+
+  addressCard: {
+    backgroundColor: "#F4F0EA",
     borderRadius: 12,
     padding: 16,
     gap: 6,
   },
-  addrName: { fontSize: 13, fontWeight: "600", color: C.text },
-  addr: { fontSize: 12, color: C.sub, lineHeight: 18 },
-  pay: {
+
+  addressName: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#1E1B18",
+  },
+
+  addressDetail: {
+    fontSize: 12,
+    color: "#6B655C",
+    lineHeight: 18,
+  },
+
+  paymentRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
     backgroundColor: "#FFFEFB",
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E1D6",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  payActive: { borderColor: C.primary, borderWidth: 2, backgroundColor: C.surface },
-  radio: { width: 16, height: 16, borderRadius: 8, backgroundColor: C.border },
-  radioActive: { backgroundColor: C.primary },
-  payText: { fontSize: 13, color: C.text },
-  summary: {
-    backgroundColor: C.surface,
+
+  paymentActive: {
+    borderWidth: 2,
+    borderColor: "#D96B27",
+    backgroundColor: "#F4F0EA",
+  },
+
+  radio: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#E6E1D6",
+  },
+
+  radioActive: {
+    backgroundColor: "#D96B27",
+  },
+
+  paymentText: {
+    fontSize: 13,
+    color: "#1E1B18",
+  },
+
+  summaryContainer: {
+    backgroundColor: "#F4F0EA",
     borderRadius: 12,
     padding: 16,
     gap: 8,
   },
-  sumRow: { flexDirection: "row", justifyContent: "space-between" },
-  sumLabel: { fontSize: 13, color: C.sub },
-  sumVal: { fontSize: 13, color: C.text },
-  sumTotal: { fontSize: 15, fontWeight: "600", color: C.text },
-  sumPrice: { fontSize: 15, fontWeight: "700", color: C.primary },
-  btn: {
-    backgroundColor: C.primary,
+
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  summaryLabel: {
+    fontSize: 13,
+    color: "#6B655C",
+  },
+
+  summaryValue: {
+    fontSize: 13,
+    color: "#1E1B18",
+  },
+
+  summaryTotal: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1E1B18",
+  },
+
+  summaryPrice: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#D96B27",
+  },
+
+  backButton: {
+    alignSelf: "flex-start",
+  },
+
+  backButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#D96B27",
+  },
+
+  payButton: {
+    backgroundColor: "#D96B27",
     borderRadius: 12,
     height: 52,
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     margin: 24,
     marginTop: 12,
   },
-  btnText: { color: "#FFFAF5", fontSize: 15, fontWeight: "600" },
+
+  buttonDisabled: {
+    opacity: 0.4,
+  },
+
+  payButtonText: {
+    color: "#FFFAF5",
+    fontSize: 15,
+    fontWeight: "700",
+  },
 });
+
+export default Checkout;

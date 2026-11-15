@@ -1,47 +1,66 @@
-import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import Lucide from "@react-native-vector-icons/lucide";
 import { Tabs } from "expo-router";
-import { C } from "../../lib/products";
 
-const TABS = [
-  { name: "index", title: "Home", icon: "home" },
-  { name: "explore", title: "Explore", icon: "compass" },
-  { name: "keranjang", title: "Keranjang", icon: "cart" },
-  { name: "profil", title: "Profil", icon: "person" },
-];
-
-export default function TabsLayout() {
+const TabsLayout = () => {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: C.primary,
-        tabBarInactiveTintColor: C.sub,
+        tabBarActiveTintColor: "#D96B27",
+        tabBarInactiveTintColor: "#6B655C",
         tabBarStyle: {
           backgroundColor: "#FFFEFB",
-          borderTopColor: C.border,
+          borderTopColor: "#E6E1D6",
           height: 76,
           paddingTop: 8,
         },
-        tabBarLabelStyle: { fontSize: 10 },
+        tabBarLabelStyle: {
+          fontSize: 10,
+        },
+        headerShown: false,
       }}
     >
-      {TABS.map((t) => (
-        <Tabs.Screen
-          key={t.name}
-          name={t.name}
-          options={{
-            title: t.title,
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name={t.icon}
-                size={22}
-                color={focused ? C.primary : C.sub}
-                style={focused ? undefined : { opacity: 0.6 }}
-              />
-            ),
-          }}
-        />
-      ))}
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color }) => (
+            <Lucide name="home" size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: "Explore",
+          tabBarIcon: ({ color }) => (
+            <Lucide name="compass" size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="keranjang"
+        options={{
+          title: "Keranjang",
+          tabBarIcon: ({ color }) => (
+            <Lucide name="shopping-cart" size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profil",
+          tabBarIcon: ({ color }) => (
+            <Lucide name="user" size={24} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
-}
+};
+
+export default TabsLayout;

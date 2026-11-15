@@ -6,9 +6,10 @@ Aplikasi mobile marketplace thrift fashion (jual-beli barang second) — proyek 
 
 - **8 screen fungsional:** Login, Register, Home, Explore, Detail Produk, Keranjang, Checkout, Profil
 - **Bottom Tab Navigation:** Home, Explore, Keranjang, Profil
-- **Stack Navigation:** Login/Register → halaman utama, Home → Detail Produk (dengan parameter produk), Detail/Keranjang → Checkout
+- **Stack Navigation:** Login/Register → halaman utama, Home → Detail Produk (parameter produk terkirim via query params), Detail/Keranjang → Checkout
 - Keranjang dengan state global (React Context), qty stepper, ringkasan biaya + ongkir
 - Pencarian + filter kategori di Explore
+- Ikon: Lucide (@react-native-vector-icons/lucide)
 
 ## Menjalankan
 
@@ -24,13 +25,14 @@ Scan QR dengan aplikasi **Expo Go** (Android/iOS), atau jalankan di emulator: `n
 ```
 src/
   app/
-    (auth)/       login, register
-    (tabs)/       home, explore, keranjang, profil (bottom tab)
-    detail/[id]/  detail produk (stack, parameter id)
-    checkout.tsx  checkout (stack)
-  components/     ProductCard
-  lib/            products (data + palette), cart (CartContext)
-  assets/
+    (tabs)/       index (home), explore, keranjang, profile (bottom tab)
+    login.jsx     register.jsx
+    details.jsx   detail produk (stack, parameter id via query)
+    checkout.jsx  checkout (stack)
+    _layout.jsx   root stack + cart provider
+  context/        CartContext.jsx (state keranjang global)
+  data/           products.js (data dummy + palette)
+assets/
 ```
 
 ## Anggota

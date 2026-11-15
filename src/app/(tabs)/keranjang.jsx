@@ -1,106 +1,223 @@
-import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Image } from "expo-image";
-import { ONGKIR, useCart } from "../../lib/cart";
-import { C, rupiah } from "../../lib/products";
+import React from "react";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useCart } from "../../context/CartContext";
+import { rupiah } from "../../data/products";
 
-export default function Keranjang() {
-  const { items, add, remove, total } = useCart();
+const ONGKIR = 15000;
+
+const Keranjang = () => {
+  const router = useRouter();
+  const { items, addItem, removeItem, total } = useCart();
 
   return (
-    <View style={s.screen}>
-      <Text style={s.title}>Keranjang</Text>
+    <SafeAreaView style={styles.container}>
+      {/* Title Container */}
+      <Text style={styles.brand}>Keranjang</Text>
+      {/* End Title Container */}
+
+      {/* Cart List Container */}
       {items.length === 0 ? (
-        <Text style={s.empty}>Keranjang kosong. Yuk mulai belanja.</Text>
+        <Text style={styles.emptyText}>
+          Keranjang kosong. Yuk mulai belanja.
+        </Text>
       ) : (
-        <>
-          <View style={s.list}>
-            {items.map((i) => (
-              <View key={i.product.id} style={s.row}>
-                <Image
-                  source={{ uri: i.product.img }}
-                  style={s.thumb}
-                  contentFit="cover"
-                />
-                <View style={s.info}>
-                  <Text style={s.rowTitle}>{i.product.title}</Text>
-                  <Text style={s.price}>{rupiah(i.product.price)}</Text>
-                  <View style={s.qty}>
-                    <Text style={s.qtyBtn} onPress={() => remove(i.product.id)}>
-                      −
-                    </Text>
-                    <Text style={s.qtyNum}>{i.qty}</Text>
-                    <Text
-                      style={[s.qtyBtn, { color: C.primary }]}
-                      onPress={() => add(i.product)}
-                    >
-                      +
-                    </Text>
-                  </View>
+        <View style={styles.cartList}>
+          {items.map((i) => (
+            <View key={i.product.id} style={styles.cartRow}>
+              <Image
+                source={{ uri: i.product.img }}
+                style={styles.cartThumb}
+              />
+              <View style={styles.cartInfo}>
+                <Text style={styles.cartTitle}>{i.product.title}</Text>
+                <Text style={styles.cartPrice}>{rupiah(i.product.price)}</Text>
+                <View style={styles.qtyRow}>
+                  <Pressable onPress={() => removeItem(i.product.id)}>
+                    <Text style={styles.qtyButton}>-</Text>
+                  </Pressable>
+                  <Text style={styles.qtyValue}>{i.qty}</Text>
+                  <Pressable onPress={() => addItem(i.product)}>
+                    <Text style={[styles.qtyButton, styles.qtyAdd]}>+</Text>
+                  </Pressable>
                 </View>
               </View>
-            ))}
-          </View>
-          <View style={s.summary}>
-            <View style={s.sumRow}>
-              <Text style={s.sumLabel}>Subtotal</Text>
-              <Text style={s.sumVal}>{rupiah(total)}</Text>
             </View>
-            <View style={s.sumRow}>
-              <Text style={s.sumLabel}>Ongkir</Text>
-              <Text style={s.sumVal}>{rupiah(ONGKIR)}</Text>
-            </View>
-            <View style={s.sumRow}>
-              <Text style={s.sumTotal}>Total</Text>
-              <Text style={s.sumPrice}>{rupiah(total + ONGKIR)}</Text>
-            </View>
-          </View>
-        </>
+          ))}
+        </View>
       )}
+      {/* End Cart List Container */}
+
+      {/* Summary Container */}
+      {items.length > 0 && (
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Subtotal</Text>
+            <Text style={styles.summaryValue}>{rupiah(total)}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Ongkir</Text>
+            <Text style={styles.summaryValue}>{rupiah(ONGKIR)}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryTotal}>Total</Text>
+            <Text style={styles.summaryPrice}>{rupiah(total + ONGKIR)}</Text>
+          </View>
+        </View>
+      )}
+      {/* End Summary Container */}
+
+      {/* Checkout Button Container */}
       <Pressable
-        style={[s.btn, items.length === 0 && { opacity: 0.4 }]}
+        style={[styles.checkoutButton, items.length === 0 && styles.buttonDisabled]}
         disabled={items.length === 0}
         onPress={() => router.push("/checkout")}
       >
-        <Text style={s.btnText}>Lanjut ke Checkout</Text>
+        <Text style={styles.checkoutButtonText}>Lanjut ke Checkout</Text>
       </Pressable>
-    </View>
+      {/* End Checkout Button Container */}
+    </SafeAreaView>
   );
-}
+};
 
-const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: C.bg, paddingTop: 20, paddingHorizontal: 24, gap: 14 },
-  title: { fontSize: 22, fontWeight: "700", color: C.text },
-  empty: { fontSize: 13, color: C.sub, marginTop: 20 },
-  list: { gap: 14 },
-  row: { flexDirection: "row", gap: 12 },
-  thumb: { width: 64, height: 64, borderRadius: 10 },
-  info: { flex: 1, gap: 6 },
-  rowTitle: { fontSize: 13, fontWeight: "500", color: C.text },
-  price: { fontSize: 13, fontWeight: "600", color: C.primary },
-  qty: { flexDirection: "row", alignItems: "center", gap: 14 },
-  qtyBtn: { fontSize: 18, fontWeight: "700", color: C.sub, width: 20, textAlign: "center" },
-  qtyNum: { fontSize: 13, fontWeight: "600", color: C.text },
-  summary: {
-    backgroundColor: C.surface,
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FDFBF7",
+    padding: 24,
+    gap: 14,
+  },
+
+  brand: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1E1B18",
+  },
+
+  emptyText: {
+    fontSize: 13,
+    color: "#6B655C",
+    marginTop: 20,
+  },
+
+  cartList: {
+    gap: 14,
+  },
+
+  cartRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+
+  cartThumb: {
+    width: 64,
+    height: 64,
+    borderRadius: 10,
+    backgroundColor: "#F4F0EA",
+  },
+
+  cartInfo: {
+    flex: 1,
+    gap: 6,
+  },
+
+  cartTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1E1B18",
+  },
+
+  cartPrice: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#D96B27",
+  },
+
+  qtyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  },
+
+  qtyButton: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#6B655C",
+    width: 20,
+    textAlign: "center",
+  },
+
+  qtyAdd: {
+    color: "#D96B27",
+  },
+
+  qtyValue: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1E1B18",
+  },
+
+  summaryContainer: {
+    backgroundColor: "#F4F0EA",
     borderRadius: 12,
     padding: 16,
     gap: 8,
     marginTop: 4,
   },
-  sumRow: { flexDirection: "row", justifyContent: "space-between" },
-  sumLabel: { fontSize: 13, color: C.sub },
-  sumVal: { fontSize: 13, color: C.text },
-  sumTotal: { fontSize: 15, fontWeight: "600", color: C.text },
-  sumPrice: { fontSize: 15, fontWeight: "700", color: C.primary },
-  btn: {
-    backgroundColor: C.primary,
+
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  summaryLabel: {
+    fontSize: 13,
+    color: "#6B655C",
+  },
+
+  summaryValue: {
+    fontSize: 13,
+    color: "#1E1B18",
+  },
+
+  summaryTotal: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1E1B18",
+  },
+
+  summaryPrice: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#D96B27",
+  },
+
+  checkoutButton: {
+    backgroundColor: "#D96B27",
     borderRadius: 12,
     height: 52,
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     marginTop: "auto",
     marginBottom: 16,
   },
-  btnText: { color: "#FFFAF5", fontSize: 15, fontWeight: "600" },
+
+  buttonDisabled: {
+    opacity: 0.4,
+  },
+
+  checkoutButtonText: {
+    color: "#FFFAF5",
+    fontSize: 15,
+    fontWeight: "700",
+  },
 });
+
+export default Keranjang;

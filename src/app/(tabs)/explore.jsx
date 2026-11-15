@@ -1,122 +1,222 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { Image } from "expo-image";
-import { C, PRODUCTS, rupiah } from "../../lib/products";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { PRODUCTS, rupiah } from "../../data/products";
 
-const CHIPS = ["Semua", "Jaket", "Kaos", "Celana", "Sepatu", "Tas"];
+const CATEGORIES = ["Semua", "Jaket", "Kaos", "Celana", "Sepatu", "Tas"];
 
-export default function Explore() {
-  const [chip, setChip] = useState("Semua");
-  const [q, setQ] = useState("");
+const Explore = () => {
+  const router = useRouter();
+  const [category, setCategory] = useState("Semua");
+  const [keyword, setKeyword] = useState("");
+
   const filtered = PRODUCTS.filter(
     (p) =>
-      (chip === "Semua" || p.title.toLowerCase().includes(chip.toLowerCase())) &&
-      p.title.toLowerCase().includes(q.toLowerCase())
+      (category === "Semua" || p.category === category) &&
+      p.title.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  const renderItem = ({ item }) => (
+    <Pressable
+      style={styles.productRow}
+      onPress={() =>
+        router.push({
+          pathname: "/details",
+          params: { id: item.id },
+        })
+      }
+    >
+      <Image source={{ uri: item.img }} style={styles.productThumb} />
+      <View style={styles.productInfo}>
+        <Text style={styles.productTitle}>{item.title}</Text>
+        <Text style={styles.productPrice}>{rupiah(item.price)}</Text>
+        <Text
+          style={[
+            styles.productCondition,
+            item.condition === "Like New" && styles.conditionLikeNew,
+          ]}
+        >
+          {item.condition}
+        </Text>
+      </View>
+    </Pressable>
   );
 
   return (
-    <View style={s.screen}>
-      <Text style={s.title}>Explore</Text>
-      <View style={s.search}>
-        <Ionicons name="search" size={16} color={C.sub} />
-        <TextInput
-          style={s.searchInput}
-          placeholder="Cari barang second..."
-          placeholderTextColor={C.sub}
-          value={q}
-          onChangeText={setQ}
-        />
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={s.chips}
-      >
-        {CHIPS.map((n) => (
-          <Text
-            key={n}
-            style={[s.chip, chip === n && s.chipActive]}
-            onPress={() => setChip(n)}
-          >
-            {n}
-          </Text>
-        ))}
-      </ScrollView>
-      <ScrollView
-        contentContainerStyle={s.list}
-        showsVerticalScrollIndicator={false}
-      >
-        <Image
-          source={{ uri: PRODUCTS[7].img }}
-          style={s.banner}
-          contentFit="cover"
-        />
-        {filtered.map((p) => (
-          <View key={p.id} style={s.row}>
-            <Image source={{ uri: p.img }} style={s.thumb} contentFit="cover" />
-            <View style={s.info}>
-              <Text style={s.rowTitle}>{p.title}</Text>
-              <Text style={s.price}>{rupiah(p.price)}</Text>
-              <Text style={[s.cond, p.condition === "Like New" && s.condLN]}>
-                {p.condition}
-              </Text>
-            </View>
-          </View>
-        ))}
-        {filtered.length === 0 && (
-          <Text style={s.empty}>Tidak ada barang yang cocok.</Text>
-        )}
-      </ScrollView>
-    </View>
-  );
-}
+    <SafeAreaView style={styles.container}>
+      {/* Title Container */}
+      <Text style={styles.brand}>Explore</Text>
+      {/* End Title Container */}
 
-const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: C.bg, paddingTop: 20, gap: 14 },
-  title: { fontSize: 22, fontWeight: "700", color: C.text, paddingHorizontal: 24 },
-  search: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginHorizontal: 24,
-    backgroundColor: C.surface,
+      {/* Search Container */}
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Cari barang second..."
+        placeholderTextColor="#6B655C"
+        value={keyword}
+        onChangeText={setKeyword}
+      />
+      {/* End Search Container */}
+
+      {/* Category Container */}
+      <FlatList
+        horizontal
+        data={CATEGORIES}
+        renderItem={({ item }) => (
+          <Pressable
+            style={[styles.categoryChip, category === item && styles.chipActive]}
+            onPress={() => setCategory(item)}
+          >
+            <Text
+              style={[
+                styles.chipText,
+                category === item && styles.chipTextActive,
+              ]}
+            >
+              {item}
+            </Text>
+          </Pressable>
+        )}
+        keyExtractor={(item) => item}
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoryList}
+      />
+      {/* End Category Container */}
+
+      {/* Product List Container */}
+      <FlatList
+        data={filtered}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Tidak ada barang yang cocok.</Text>
+        }
+      />
+      {/* End Product List Container */}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FDFBF7",
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    gap: 14,
+  },
+
+  brand: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1E1B18",
+  },
+
+  searchInput: {
+    backgroundColor: "#F4F0EA",
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E1D6",
     borderRadius: 12,
     paddingHorizontal: 16,
     height: 44,
+    fontSize: 13,
+    color: "#1E1B18",
   },
-  searchInput: { flex: 1, fontSize: 13, color: C.text },
-  chips: { gap: 8, paddingHorizontal: 24 },
-  chip: {
-    fontSize: 12,
-    color: C.sub,
-    backgroundColor: C.surface,
+
+  categoryList: {
+    flexGrow: 0,
+  },
+
+  categoryChip: {
+    backgroundColor: "#F4F0EA",
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    overflow: "hidden",
+    marginRight: 8,
   },
-  chipActive: { backgroundColor: C.primary, color: "#FFFAF5", fontWeight: "600" },
-  list: { gap: 14, paddingHorizontal: 24, paddingBottom: 24 },
-  banner: { width: "100%", height: 100, borderRadius: 16 },
-  row: { flexDirection: "row", gap: 12, alignItems: "center" },
-  thumb: { width: 72, height: 72, borderRadius: 10 },
-  info: { gap: 5, flex: 1 },
-  rowTitle: { fontSize: 13, fontWeight: "500", color: C.text },
-  price: { fontSize: 13, fontWeight: "600", color: C.primary },
-  cond: {
+
+  chipActive: {
+    backgroundColor: "#D96B27",
+  },
+
+  chipText: {
+    fontSize: 12,
+    color: "#6B655C",
+  },
+
+  chipTextActive: {
+    color: "#FFFAF5",
+    fontWeight: "700",
+  },
+
+  list: {
+    gap: 14,
+    paddingBottom: 24,
+  },
+
+  productRow: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
+  },
+
+  productThumb: {
+    width: 72,
+    height: 72,
+    borderRadius: 10,
+    backgroundColor: "#F4F0EA",
+  },
+
+  productInfo: {
+    flex: 1,
+    gap: 5,
+  },
+
+  productTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1E1B18",
+  },
+
+  productPrice: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#D96B27",
+  },
+
+  productCondition: {
     alignSelf: "flex-start",
     fontSize: 10,
-    fontWeight: "600",
-    color: C.sub,
-    backgroundColor: C.surface,
+    fontWeight: "700",
+    color: "#6B655C",
+    backgroundColor: "#F4F0EA",
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 3,
     overflow: "hidden",
   },
-  condLN: { color: C.success, backgroundColor: "#E5F1EB" },
-  empty: { fontSize: 13, color: C.sub, textAlign: "center", marginTop: 20 },
+
+  conditionLikeNew: {
+    color: "#1F7A4C",
+    backgroundColor: "#E5F1EB",
+  },
+
+  emptyText: {
+    fontSize: 13,
+    color: "#6B655C",
+    textAlign: "center",
+    marginTop: 20,
+  },
 });
+
+export default Explore;
