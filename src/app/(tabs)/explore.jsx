@@ -146,9 +146,9 @@ const styles = StyleSheet.create({
   categoryChip: {
     backgroundColor: "#F4F0EA",
     borderRadius: 20,
-    paddingHorizontal: 11,
-    paddingVertical: 7,
-    marginRight: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+    marginRight: 5,
   },
 
   chipActive: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
 
   chipText: {
-    fontSize: 11,
+    fontSize: 10,
     color: "#6B655C",
   },
 
